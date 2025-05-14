@@ -8,6 +8,7 @@ import CategoryBadge from "../components/Category/CategoryBadge";
 import { Button } from "@/components/ui/button";
 import { X, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
 
 const AddExpense: React.FC = () => {
   const { userProfile, addExpense } = useAppContext();
@@ -72,7 +73,7 @@ const AddExpense: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => navigate(-1)} className="p-2">
@@ -157,12 +158,12 @@ const AddExpense: React.FC = () => {
           
           <div>
             <label className="text-xl font-medium block mb-2">Notes (Optional)</label>
-            <textarea
+            <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full border rounded-lg p-4 min-h-[100px]"
+              className="w-full rounded-lg p-4 min-h-[100px]"
               placeholder="Add details here..."
-            ></textarea>
+            />
           </div>
           
           <Button 
