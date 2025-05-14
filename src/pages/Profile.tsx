@@ -1,13 +1,14 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { X, ChevronRight, Moon, Sun, Heart, Info, FileUp, Trash2, DollarSign, Pencil } from "lucide-react";
+import { X, ChevronRight, Moon, Sun, Heart, Info, FileUp, Trash2, DollarSign, Pencil, Search } from "lucide-react";
 import { Currency } from "../types/expenses";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { currencyList, getCurrenciesByRegion, getPopularCurrencies } from "../utils/currencies";
 
 const Profile: React.FC = () => {
   const { userProfile, updateUserProfile, clearAllData } = useAppContext();
@@ -15,18 +16,44 @@ const Profile: React.FC = () => {
   const [name, setName] = useState(userProfile.name);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState<string>("popular");
 
-  const currencies: Currency[] = [
-    { code: "USD", symbol: "$", name: "US Dollar" },
-    { code: "EUR", symbol: "€", name: "Euro" },
-    { code: "GBP", symbol: "£", name: "British Pound" },
-    { code: "INR", symbol: "₹", name: "Indian Rupee" },
-    { code: "JPY", symbol: "¥", name: "Japanese Yen" }
+  const regions = [
+    { id: "popular", name: "Popular" },
+    { id: "americas", name: "Americas" },
+    { id: "europe", name: "Europe" },
+    { id: "asia", name: "Asia" },
+    { id: "africa", name: "Africa" },
+    { id: "oceania", name: "Oceania" }
   ];
+
+  const getDisplayedCurrencies = (): Currency[] => {
+    if (searchQuery.trim()) {
+      return currencyList.filter(currency => 
+        currency.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        currency.code.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedRegion === "popular") {
+      return getPopularCurrencies();
+    }
+
+    if (selectedRegion === "all") {
+      return currencyList;
+    }
+
+    return getCurrenciesByRegion(selectedRegion);
+  };
 
   const handleCurrencySelect = (currency: Currency) => {
     updateUserProfile({ currency });
     setOpenSheet("");
+    toast({
+      title: "Currency Updated",
+      description: `Your default currency has been set to ${currency.name}`
+    });
   };
 
   const toggleTheme = () => {
@@ -382,31 +409,45 @@ const Profile: React.FC = () => {
               </button>
             </div>
           </SheetHeader>
-          <div className="mb-4">
+          <div className="mb-4 relative">
+            <Search className="absolute left-3 top-3 text-gray-500" size={18} />
             <input
               type="text"
               placeholder="Search currencies..."
-              className="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg"
+              className="w-full p-3 pl-10 bg-gray-100 dark:bg-gray-800 rounded-lg"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <div className="flex space-x-2 overflow-x-auto mb-4">
-            <button className="bg-purple-500 text-white px-6 py-2 rounded-full">
+            {regions.map((region) => (
+              <button 
+                key={region.id}
+                className={`whitespace-nowrap ${
+                  selectedRegion === region.id 
+                  ? "bg-purple-500 text-white" 
+                  : "bg-gray-100 dark:bg-gray-800"
+                } px-6 py-2 rounded-full`}
+                onClick={() => setSelectedRegion(region.id)}
+              >
+                {region.name}
+              </button>
+            ))}
+            <button 
+              className={`whitespace-nowrap ${
+                selectedRegion === "all" 
+                ? "bg-purple-500 text-white" 
+                : "bg-gray-100 dark:bg-gray-800"
+              } px-6 py-2 rounded-full`}
+              onClick={() => setSelectedRegion("all")}
+            >
               All
-            </button>
-            <button className="bg-gray-100 dark:bg-gray-800 px-6 py-2 rounded-full">
-              Americas
-            </button>
-            <button className="bg-gray-100 dark:bg-gray-800 px-6 py-2 rounded-full">
-              Europe
-            </button>
-            <button className="bg-gray-100 dark:bg-gray-800 px-6 py-2 rounded-full">
-              Asia
             </button>
           </div>
 
-          <div className="divide-y">
-            {currencies.map((currency) => (
+          <div className="divide-y overflow-y-auto max-h-[calc(100%-160px)]">
+            {getDisplayedCurrencies().map((currency) => (
               <button
                 key={currency.code}
                 className={`w-full flex items-center justify-between p-4 ${
