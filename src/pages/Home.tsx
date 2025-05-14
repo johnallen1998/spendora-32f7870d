@@ -9,9 +9,17 @@ import { ChevronRight } from "lucide-react";
 import { Category } from "../types/expenses";
 
 const Home: React.FC = () => {
-  const { userProfile, getFilteredExpenses, getCategoryTotal, getTotalExpenses, selectedCategory, filterByCategory } = useAppContext();
+  const { 
+    userProfile, 
+    getFilteredExpenses, 
+    getCategoryTotal, 
+    getTotalExpenses, 
+    selectedCategory, 
+    filterByCategory,
+    categories
+  } = useAppContext();
 
-  const categories: Category[] = ["groceries", "food", "transportation", "entertainment"];
+  const defaultCategories: Category[] = ["groceries", "food", "transportation", "entertainment"];
   const recentExpenses = getFilteredExpenses().slice(0, 5);
   
   return (
@@ -39,32 +47,32 @@ const Home: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
             </div>
-            <p className="text-gray-500">Total Expenses</p>
-            <h3 className="text-2xl font-bold">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
+            <p className="text-gray-500 text-sm">Total Expenses</p>
+            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
           </div>
           
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-categoryBg-food rounded-full flex items-center justify-center mb-2">
+            <div className="w-12 h-12 bg-[#FEF7CD] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="food" />
             </div>
-            <p className="text-gray-500">Food & Drinks</p>
-            <h3 className="text-2xl font-bold">{userProfile.currency.symbol}{getCategoryTotal("food").toFixed(2)}</h3>
+            <p className="text-gray-500 text-sm">Food & Drinks</p>
+            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("food").toFixed(2)}</h3>
           </div>
           
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-categoryBg-groceries rounded-full flex items-center justify-center mb-2">
+            <div className="w-12 h-12 bg-[#F2FCE2] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="groceries" />
             </div>
-            <p className="text-gray-500">Shopping</p>
-            <h3 className="text-2xl font-bold">{userProfile.currency.symbol}{getCategoryTotal("groceries").toFixed(2)}</h3>
+            <p className="text-gray-500 text-sm">Shopping</p>
+            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("groceries").toFixed(2)}</h3>
           </div>
           
           <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-categoryBg-transportation rounded-full flex items-center justify-center mb-2">
+            <div className="w-12 h-12 bg-[#FDE1D3] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="transportation" />
             </div>
-            <p className="text-gray-500">Transportation</p>
-            <h3 className="text-2xl font-bold">{userProfile.currency.symbol}{getCategoryTotal("transportation").toFixed(2)}</h3>
+            <p className="text-gray-500 text-sm">Transportation</p>
+            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("transportation").toFixed(2)}</h3>
           </div>
         </div>
       </section>
@@ -81,13 +89,13 @@ const Home: React.FC = () => {
             See All <ChevronRight size={16} />
           </Link>
         </div>
-        <div className="flex justify-between">
-          {categories.map(category => (
+        <div className="grid grid-cols-4 gap-2">
+          {categories.slice(0, 4).map(category => (
             <CategoryBadge
-              key={category}
-              category={category}
-              selected={selectedCategory === category}
-              onClick={() => filterByCategory(selectedCategory === category ? null : category)}
+              key={category.id}
+              category={category.name}
+              selected={selectedCategory === category.name}
+              onClick={() => filterByCategory(selectedCategory === category.name ? null : category.name)}
             />
           ))}
         </div>

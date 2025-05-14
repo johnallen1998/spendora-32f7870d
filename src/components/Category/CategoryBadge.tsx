@@ -2,6 +2,7 @@
 import React from "react";
 import { Category } from "../../types/expenses";
 import CategoryIcon from "./CategoryIcon";
+import { useAppContext } from "../../context/AppContext";
 
 interface CategoryBadgeProps {
   category: Category;
@@ -16,23 +17,17 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   onClick,
   className = ""
 }) => {
+  const { getCategoryInfo } = useAppContext();
+  
+  const categoryInfo = getCategoryInfo(category);
+  
   const getCategoryName = (cat: Category) => {
     return cat.charAt(0).toUpperCase() + cat.slice(1);
   };
 
   const getCategoryColor = (cat: Category): string => {
-    switch (cat) {
-      case "groceries":
-        return "bg-categoryBg-groceries";
-      case "food":
-        return "bg-categoryBg-food";
-      case "transportation":
-        return "bg-categoryBg-transportation";
-      case "entertainment":
-        return "bg-categoryBg-entertainment";
-      default:
-        return "bg-gray-200";
-    }
+    const info = getCategoryInfo(cat);
+    return `bg-[${info.color}]`;
   };
 
   return (
@@ -41,11 +36,12 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
       onClick={onClick}
     >
       <div 
-        className={`w-16 h-16 rounded-full flex items-center justify-center ${getCategoryColor(category)} ${selected ? "border-2 border-purple-500" : ""}`}
+        className={`w-16 h-16 rounded-full flex items-center justify-center bg-opacity-80`}
+        style={{ backgroundColor: categoryInfo.color }}
       >
         <CategoryIcon category={category} size={28} className="text-gray-700" />
       </div>
-      <span className="mt-2 text-sm">{getCategoryName(category)}</span>
+      <span className="mt-2 text-sm truncate max-w-full">{getCategoryName(category)}</span>
     </div>
   );
 };

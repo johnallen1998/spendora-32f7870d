@@ -1,5 +1,13 @@
 
-export type Category = "groceries" | "food" | "transportation" | "entertainment";
+export type Category = "groceries" | "food" | "transportation" | "entertainment" | string;
+
+export type CategoryInfo = {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  isCustom?: boolean;
+};
 
 export type Expense = {
   id: string;

@@ -15,32 +15,17 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
   total,
   percentage,
 }) => {
-  const { userProfile } = useAppContext();
+  const { userProfile, getCategoryInfo } = useAppContext();
   const { currency } = userProfile;
-
-  const getCategoryColor = (cat: Category): string => {
-    switch (cat) {
-      case "groceries":
-        return "bg-categoryBg-groceries";
-      case "food":
-        return "bg-categoryBg-food";
-      case "transportation":
-        return "bg-categoryBg-transportation";
-      case "entertainment":
-        return "bg-categoryBg-entertainment";
-      default:
-        return "bg-gray-200";
-    }
-  };
+  const categoryInfo = getCategoryInfo(category);
 
   return (
     <div className="mb-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${getCategoryColor(
-              category
-            )}`}
+            className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+            style={{ backgroundColor: categoryInfo.color }}
           >
             <CategoryIcon category={category} size={20} />
           </div>
@@ -53,8 +38,11 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
       </div>
       <div className="h-2 rounded-full bg-gray-200">
         <div
-          className={`h-2 rounded-full ${getCategoryColor(category)}`}
-          style={{ width: `${percentage}%` }}
+          className="h-2 rounded-full"
+          style={{ 
+            width: `${percentage}%`,
+            backgroundColor: categoryInfo.color
+          }}
         ></div>
       </div>
     </div>

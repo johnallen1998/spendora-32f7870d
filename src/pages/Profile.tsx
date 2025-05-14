@@ -1,16 +1,19 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { X, ChevronRight, Moon, Sun, Heart, Info, FileUp, Trash2, DollarSign } from "lucide-react";
+import { X, ChevronRight, Moon, Sun, Heart, Info, FileUp, Trash2, DollarSign, Pencil } from "lucide-react";
 import { Currency } from "../types/expenses";
 import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 const Profile: React.FC = () => {
   const { userProfile, updateUserProfile, clearAllData } = useAppContext();
-  const [openSheet, setOpenSheet] = useState<"" | "currency" | "support" | "export">("");
+  const [openSheet, setOpenSheet] = useState<"" | "currency" | "support" | "export" | "editName" | "about">("");
+  const [name, setName] = useState(userProfile.name);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const currencies: Currency[] = [
@@ -56,11 +59,58 @@ const Profile: React.FC = () => {
   };
 
   const handleExport = (format: string) => {
+    const expenses = localStorage.getItem("expenses") || "[]";
+    const data = JSON.parse(expenses);
+    
+    let exportData: string;
+    let mimeType: string;
+    let fileExtension: string;
+    
+    if (format === "CSV") {
+      // Convert to CSV
+      const header = "id,title,amount,category,date,notes\n";
+      const csvData = data.map((expense: any) => 
+        `${expense.id},"${expense.title}",${expense.amount},"${expense.category}","${expense.date}","${expense.notes || ''}"`
+      ).join("\n");
+      exportData = header + csvData;
+      mimeType = "text/csv";
+      fileExtension = "csv";
+    } else {
+      // JSON format
+      exportData = JSON.stringify(data, null, 2);
+      mimeType = "application/json";
+      fileExtension = "json";
+    }
+    
+    const blob = new Blob([exportData], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `cashlens-expenses.${fileExtension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
     toast({
       title: "Data Exported",
       description: `Your data has been exported in ${format} format.`
     });
     setOpenSheet("");
+  };
+
+  const handleEditName = () => {
+    updateUserProfile({ name });
+    setOpenSheet("");
+    toast({
+      title: "Name Updated",
+      description: "Your profile name has been updated."
+    });
+  };
+  
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -81,7 +131,10 @@ const Profile: React.FC = () => {
             </span>
           </div>
           <h2 className="text-3xl font-bold">{userProfile.name}</h2>
-          <button className="mt-4 text-purple-500 border border-purple-500 rounded-full px-6 py-2">
+          <button 
+            onClick={() => setOpenSheet("editName")}
+            className="mt-4 text-purple-500 border border-purple-500 rounded-full px-6 py-2"
+          >
             Edit Profile
           </button>
         </div>
@@ -153,7 +206,10 @@ const Profile: React.FC = () => {
               <span className="text-gray-500">1.0.3 (3)</span>
             </div>
 
-            <button className="w-full flex items-center justify-between p-4">
+            <button 
+              className="w-full flex items-center justify-between p-4"
+              onClick={() => setOpenSheet("about")}
+            >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
                   <Info className="text-purple-500" size={20} />
@@ -197,6 +253,125 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
+      {/* Edit Name Sheet */}
+      <Sheet open={openSheet === "editName"} onOpenChange={() => setOpenSheet("")}>
+        <SheetContent side="bottom" className="h-[40%]">
+          <SheetHeader className="mb-4">
+            <div className="flex justify-between items-center">
+              <SheetTitle className="text-2xl">Edit Profile</SheetTitle>
+              <button onClick={() => setOpenSheet("")} className="text-gray-500">
+                Cancel
+              </button>
+            </div>
+          </SheetHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name</label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full"
+                placeholder="Enter your name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Profile Picture</label>
+              <div className="flex items-center">
+                <div className="w-16 h-16 bg-purple-400 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-2xl font-semibold text-white">
+                    {name.charAt(0)}
+                  </span>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={triggerFileInput}
+                  className="text-purple-500"
+                >
+                  <Pencil size={16} className="mr-2" />
+                  Change Photo
+                </Button>
+                <input 
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={() => {
+                    toast({
+                      title: "Coming Soon",
+                      description: "Profile picture upload will be available in a future update."
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <Button 
+              onClick={handleEditName}
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white"
+            >
+              Save Changes
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* About CashLens Sheet */}
+      <Sheet open={openSheet === "about"} onOpenChange={() => setOpenSheet("")}>
+        <SheetContent side="bottom" className="h-[80%]">
+          <SheetHeader className="mb-4">
+            <div className="flex justify-between items-center">
+              <SheetTitle className="text-2xl">About CashLens</SheetTitle>
+              <button onClick={() => setOpenSheet("")} className="text-gray-500">
+                Done
+              </button>
+            </div>
+          </SheetHeader>
+          
+          <div className="flex flex-col items-center py-8">
+            <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
+              <span className="text-3xl font-semibold text-white">C</span>
+            </div>
+            <h2 className="text-3xl font-bold mb-2">CashLens</h2>
+            <p className="text-gray-500 mb-2">Version 1.0.3 (3)</p>
+            
+            <div className="mt-8 space-y-6 w-full text-left">
+              <div>
+                <h3 className="font-bold mb-2">About</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  CashLens is a simple yet powerful expense tracking app designed to help you manage your finances effectively. 
+                  Track your spending, categorize expenses, and gain insights into your financial habits.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="font-bold mb-2">Features</h3>
+                <ul className="list-disc pl-5 text-gray-600 dark:text-gray-400 space-y-1">
+                  <li>Track daily expenses</li>
+                  <li>Categorize spending</li>
+                  <li>Visualize spending patterns</li>
+                  <li>Multiple currency support</li>
+                  <li>Data export options</li>
+                  <li>Dark/Light theme</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="font-bold mb-2">Credits</h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Designed and developed with ❤️ by the CashLens team.
+                </p>
+              </div>
+              
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-500 text-center">
+                  © 2025 CashLens. All rights reserved.
+                </p>
+              </div>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Currency Sheet */}
       <Sheet open={openSheet === "currency"} onOpenChange={() => setOpenSheet("")}>
         <SheetContent side="bottom" className="h-[80%]">
           <SheetHeader className="mb-4">
