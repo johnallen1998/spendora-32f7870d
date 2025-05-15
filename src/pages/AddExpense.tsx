@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import CategoryBadge from "../components/Category/CategoryBadge";
 import { Button } from "@/components/ui/button";
 import { X, Calendar } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 
 const AddExpense: React.FC = () => {
@@ -22,7 +22,12 @@ const AddExpense: React.FC = () => {
   const [notes, setNotes] = useState<string>("");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   
-  const categories: Category[] = ["groceries", "food", "transportation", "entertainment"];
+  const { categories } = useAppContext();
+  
+  // Map categories to just their names to display in the UI
+  const categoryNames = categories
+    .map(cat => cat.name as Category)
+    .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +77,10 @@ const AddExpense: React.FC = () => {
     });
   };
 
+  const handleManageCategories = () => {
+    navigate("/categories");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
       <div className="max-w-md mx-auto">
@@ -117,13 +126,13 @@ const AddExpense: React.FC = () => {
               <button 
                 type="button" 
                 className="text-purple-500"
-                onClick={() => {/* Manage categories */}}
+                onClick={handleManageCategories}
               >
                 Manage
               </button>
             </div>
-            <div className="flex justify-between">
-              {categories.map((cat) => (
+            <div className="flex flex-wrap justify-between gap-2">
+              {categoryNames.map((cat) => (
                 <CategoryBadge
                   key={cat}
                   category={cat}

@@ -37,7 +37,7 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
       >
         <CategoryIcon category={category} size={28} className="text-gray-700" />
       </div>
-      <span className={`mt-2 text-sm truncate max-w-full ${selected ? 'font-bold text-purple-500' : ''}`}>
+      <span className={`mt-2 text-sm text-center truncate w-16 ${selected ? 'font-bold text-purple-500' : ''}`}>
         {getCategoryName(category)}
       </span>
     </div>
