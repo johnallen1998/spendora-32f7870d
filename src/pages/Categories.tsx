@@ -149,7 +149,7 @@ const Categories = () => {
                 {colorOptions.map((color) => (
                   <button
                     key={color}
-                    className={`w-10 h-10 rounded-full ${selectedColor === color ? "ring-2 ring-purple-500" : ""}`}
+                    className={`w-10 h-10 rounded-full ${selectedColor === color ? "ring-2 ring-offset-2 ring-purple-500" : ""}`}
                     style={{ backgroundColor: color }}
                     onClick={() => setSelectedColor(color)}
                   />

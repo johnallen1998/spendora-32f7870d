@@ -63,7 +63,7 @@ const Home: React.FC = () => {
             <div className="w-12 h-12 bg-[#F2FCE2] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="groceries" />
             </div>
-            <p className="text-gray-500 text-sm">Shopping</p>
+            <p className="text-gray-500 text-sm">Groceries</p>
             <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("groceries").toFixed(2)}</h3>
           </div>
           

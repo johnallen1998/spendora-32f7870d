@@ -14,10 +14,11 @@ const Profile: React.FC = () => {
   const { userProfile, updateUserProfile, clearAllData } = useAppContext();
   const [openSheet, setOpenSheet] = useState<"" | "currency" | "support" | "export" | "editName" | "about">("");
   const [name, setName] = useState(userProfile.name);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState<string>("popular");
+  const [selectedRegion, setSelectedRegion] = useState<string>("all");
 
   const regions = [
     { id: "popular", name: "Popular" },
@@ -134,6 +135,24 @@ const Profile: React.FC = () => {
     });
   };
   
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setProfileImage(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+      
+      toast({
+        title: "Profile Picture Updated",
+        description: "Your profile picture has been updated"
+      });
+    }
+  };
+  
   const triggerFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -152,10 +171,14 @@ const Profile: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-center mb-8">
-          <div className="w-24 h-24 bg-purple-400 rounded-full flex items-center justify-center mb-4">
-            <span className="text-4xl font-semibold text-white">
-              {userProfile.name.charAt(0)}
-            </span>
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-4 overflow-hidden" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
+            {profileImage ? (
+              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-4xl font-semibold text-white">
+                {userProfile.name.charAt(0)}
+              </span>
+            )}
           </div>
           <h2 className="text-3xl font-bold">{userProfile.name}</h2>
           <button 
@@ -304,10 +327,14 @@ const Profile: React.FC = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Profile Picture</label>
               <div className="flex items-center">
-                <div className="w-16 h-16 bg-purple-400 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-2xl font-semibold text-white">
-                    {name.charAt(0)}
-                  </span>
+                <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center mr-3" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
+                  {profileImage ? (
+                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-semibold text-white">
+                      {name.charAt(0)}
+                    </span>
+                  )}
                 </div>
                 <Button 
                   variant="outline" 
@@ -322,12 +349,7 @@ const Profile: React.FC = () => {
                   ref={fileInputRef}
                   accept="image/*"
                   className="hidden"
-                  onChange={() => {
-                    toast({
-                      title: "Coming Soon",
-                      description: "Profile picture upload will be available in a future update."
-                    });
-                  }}
+                  onChange={handleImageChange}
                 />
               </div>
             </div>
