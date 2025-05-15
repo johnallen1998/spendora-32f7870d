@@ -7,6 +7,7 @@ import ExpenseCard from "../components/ExpenseCard";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Category } from "../types/expenses";
+import { toast } from "@/components/ui/use-toast";
 
 const Home: React.FC = () => {
   const { 
@@ -51,6 +52,7 @@ const Home: React.FC = () => {
             <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
           </div>
           
+          {/* Fixed card with proper layout */}
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="w-12 h-12 bg-[#FEF7CD] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="food" />
@@ -59,6 +61,7 @@ const Home: React.FC = () => {
             <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("food").toFixed(2)}</h3>
           </div>
           
+          {/* Fixed card with proper layout */}
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="w-12 h-12 bg-[#F2FCE2] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="groceries" />
@@ -67,6 +70,7 @@ const Home: React.FC = () => {
             <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("groceries").toFixed(2)}</h3>
           </div>
           
+          {/* Fixed card with proper layout */}
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="w-12 h-12 bg-[#FDE1D3] rounded-full flex items-center justify-center mb-2">
               <CategoryBadge category="transportation" />
