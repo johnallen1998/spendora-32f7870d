@@ -20,7 +20,6 @@ const Home: React.FC = () => {
     categories
   } = useAppContext();
 
-  const defaultCategories: Category[] = ["groceries", "food", "transportation", "entertainment"];
   const recentExpenses = getFilteredExpenses().slice(0, 5);
   
   return (
@@ -42,7 +41,8 @@ const Home: React.FC = () => {
       <section>
         <h2 className="text-2xl font-bold mb-4">Summary</h2>
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
+          {/* Total Expenses Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
             <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-2">
               <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
@@ -51,33 +51,22 @@ const Home: React.FC = () => {
             <p className="text-gray-500 text-sm">Total Expenses</p>
             <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
           </div>
-          
-          {/* Fixed card with proper layout */}
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-[#FEF7CD] rounded-full flex items-center justify-center mb-2">
-              <CategoryBadge category="food" />
+
+          {/* Generate cards for top 3 categories */}
+          {categories.slice(0, 3).map(category => (
+            <div key={category.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+              <div 
+                className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                style={{ backgroundColor: category.color }}
+              >
+                <CategoryBadge category={category.name} />
+              </div>
+              <p className="text-gray-500 text-sm capitalize">{category.name}</p>
+              <h3 className="text-2xl font-bold truncate">
+                {userProfile.currency.symbol}{getCategoryTotal(category.name).toFixed(2)}
+              </h3>
             </div>
-            <p className="text-gray-500 text-sm">Food & Drinks</p>
-            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("food").toFixed(2)}</h3>
-          </div>
-          
-          {/* Fixed card with proper layout */}
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-[#F2FCE2] rounded-full flex items-center justify-center mb-2">
-              <CategoryBadge category="groceries" />
-            </div>
-            <p className="text-gray-500 text-sm">Groceries</p>
-            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("groceries").toFixed(2)}</h3>
-          </div>
-          
-          {/* Fixed card with proper layout */}
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-[#FDE1D3] rounded-full flex items-center justify-center mb-2">
-              <CategoryBadge category="transportation" />
-            </div>
-            <p className="text-gray-500 text-sm">Transportation</p>
-            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getCategoryTotal("transportation").toFixed(2)}</h3>
-          </div>
+          ))}
         </div>
       </section>
 

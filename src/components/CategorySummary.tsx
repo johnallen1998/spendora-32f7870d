@@ -29,7 +29,7 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
           >
             <CategoryIcon category={category} size={20} />
           </div>
-          <span className="capitalize font-medium">{category}</span>
+          <span className="capitalize font-medium truncate max-w-[100px]">{category}</span>
         </div>
         <div className="text-right">
           <span className="font-bold text-lg">{currency.symbol}{total.toFixed(2)}</span>
