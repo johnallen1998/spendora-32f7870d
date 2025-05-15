@@ -42,27 +42,27 @@ const Home: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">Summary</h2>
         <div className="grid grid-cols-2 gap-4 mb-8">
           {/* Total Expenses Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-2">
-              <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+              <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
             </div>
-            <p className="text-gray-500 text-sm">Total Expenses</p>
-            <h3 className="text-2xl font-bold truncate">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
+            <p className="text-gray-500 text-base mb-1">Total Expenses</p>
+            <h3 className="text-3xl font-bold">{userProfile.currency.symbol}{getTotalExpenses().toFixed(2)}</h3>
           </div>
 
           {/* Generate cards for top 3 categories */}
           {categories.slice(0, 3).map(category => (
-            <div key={category.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div key={category.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
               <div 
-                className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-3"
                 style={{ backgroundColor: category.color }}
               >
-                <CategoryBadge category={category.name} />
+                <CategoryIcon category={category.name} size={28} className="text-gray-700" />
               </div>
-              <p className="text-gray-500 text-sm capitalize">{category.name}</p>
-              <h3 className="text-2xl font-bold truncate">
+              <p className="text-gray-500 text-base mb-1 capitalize">{category.name}</p>
+              <h3 className="text-3xl font-bold">
                 {userProfile.currency.symbol}{getCategoryTotal(category.name).toFixed(2)}
               </h3>
             </div>
