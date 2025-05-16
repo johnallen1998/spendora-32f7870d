@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -73,9 +72,9 @@ const Profile: React.FC = () => {
   };
 
   const supportOptions = [
-    { title: "Coffee for the Coder", description: "Help fuel development with a coffee!", price: 99 },
-    { title: "Lunch for the Library", description: "Helps power new features and timely updates.", price: 499 },
-    { title: "Fuel the Feature Rocket", description: "You're propelling CashLens to new heights :)", price: 999 }
+    { title: "Coffee for the Developer", description: "Help fuel development with a coffee!", price: 99 },
+    { title: "Lunch for the Team", description: "Helps power new features and timely updates.", price: 499 },
+    { title: "Premium Supporter", description: "You're propelling Spendora to new heights :)", price: 999 }
   ];
 
   const handleSupport = (option: typeof supportOptions[0]) => {
@@ -114,7 +113,7 @@ const Profile: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `cashlens-expenses.${fileExtension}`;
+    link.download = `spendora-expenses.${fileExtension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -264,7 +263,7 @@ const Profile: React.FC = () => {
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
                   <Info className="text-purple-500" size={20} />
                 </div>
-                <span>About CashLens</span>
+                <span>About Spendora</span>
               </div>
               <ChevronRight size={18} className="text-gray-500" />
             </button>
@@ -363,12 +362,12 @@ const Profile: React.FC = () => {
         </SheetContent>
       </Sheet>
 
-      {/* About CashLens Sheet */}
+      {/* About Spendora Sheet */}
       <Sheet open={openSheet === "about"} onOpenChange={() => setOpenSheet("")}>
         <SheetContent side="bottom" className="h-[80%]">
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
-              <SheetTitle className="text-2xl">About CashLens</SheetTitle>
+              <SheetTitle className="text-2xl">About Spendora</SheetTitle>
               <button onClick={() => setOpenSheet("")} className="text-gray-500">
                 Done
               </button>
@@ -377,42 +376,42 @@ const Profile: React.FC = () => {
           
           <div className="flex flex-col items-center py-8">
             <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
-              <span className="text-3xl font-semibold text-white">C</span>
+              <span className="text-3xl font-semibold text-white">S</span>
             </div>
-            <h2 className="text-3xl font-bold mb-2">CashLens</h2>
+            <h2 className="text-3xl font-bold mb-2">Spendora</h2>
             <p className="text-gray-500 mb-2">Version 1.0.3 (3)</p>
             
             <div className="mt-8 space-y-6 w-full text-left">
               <div>
                 <h3 className="font-bold mb-2">About</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  CashLens is a simple yet powerful expense tracking app designed to help you manage your finances effectively. 
-                  Track your spending, categorize expenses, and gain insights into your financial habits.
+                  Spendora is an elegant expense tracking solution designed to bring clarity to your finances. 
+                  With intuitive tracking tools and beautiful visualizations, managing your money has never been more delightful.
                 </p>
               </div>
               
               <div>
                 <h3 className="font-bold mb-2">Features</h3>
                 <ul className="list-disc pl-5 text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>Track daily expenses</li>
-                  <li>Categorize spending</li>
-                  <li>Visualize spending patterns</li>
+                  <li>Smart expense tracking</li>
+                  <li>Customizable categories</li>
+                  <li>Beautiful spending visualizations</li>
                   <li>Multiple currency support</li>
-                  <li>Data export options</li>
-                  <li>Dark/Light theme</li>
+                  <li>Export options for your data</li>
+                  <li>Personalized themes</li>
                 </ul>
               </div>
               
               <div>
                 <h3 className="font-bold mb-2">Credits</h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Designed and developed with ❤️ by the CashLens team.
+                  Crafted with ❤️ by the Spendora team.
                 </p>
               </div>
               
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 text-center">
-                  © 2025 CashLens. All rights reserved.
+                  © 2025 Spendora. All rights reserved.
                 </p>
               </div>
             </div>
@@ -503,9 +502,9 @@ const Profile: React.FC = () => {
             <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
               <Heart className="text-white" size={40} />
             </div>
-            <h2 className="text-3xl font-bold mb-2">Support CashLens</h2>
+            <h2 className="text-3xl font-bold mb-2">Support Spendora</h2>
             <p className="text-gray-500 text-center mb-8">
-              Your support helps us continue improving CashLens and adding new features. Thank you for your generosity!
+              Your support enables us to continue improving Spendora and bring you new features. Every contribution makes a difference!
             </p>
 
             {supportOptions.map((option) => (
