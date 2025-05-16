@@ -1,8 +1,8 @@
-
 import React from "react";
 import { useAppContext } from "../context/AppContext";
 import TimeFrameSelector from "../components/TimeFrameSelector";
 import CategoryBadge from "../components/Category/CategoryBadge";
+import CategoryIcon from "../components/Category/CategoryIcon";
 import ExpenseCard from "../components/ExpenseCard";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
