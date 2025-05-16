@@ -27,17 +27,17 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
 
   return (
     <div 
-      className={`flex flex-col items-center cursor-pointer transition-all ${className}`}
+      className={`flex flex-col items-center cursor-pointer transition-all animate-scale-in ${className}`}
       onClick={onClick}
     >
       <div 
-        className={`w-16 h-16 rounded-full flex items-center justify-center bg-opacity-80
-          ${selected ? 'ring-2 ring-purple-500 ring-offset-2 scale-105' : ''}`}
+        className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center bg-opacity-80
+          ${selected ? 'ring-2 ring-purple-500 ring-offset-2 scale-105' : ''} hover:scale-110 transition-transform`}
         style={{ backgroundColor: categoryInfo.color }}
       >
-        <CategoryIcon category={category} size={28} className="text-gray-700" />
+        <CategoryIcon category={category} size={20} className="text-gray-700" />
       </div>
-      <span className={`mt-2 text-sm text-center truncate w-16 ${selected ? 'font-bold text-purple-500' : ''}`}>
+      <span className={`mt-1 md:mt-2 text-xs md:text-sm text-center truncate w-12 md:w-16 ${selected ? 'font-bold text-purple-500' : ''}`}>
         {getCategoryName(category)}
       </span>
     </div>
