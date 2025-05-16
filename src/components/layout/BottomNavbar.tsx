@@ -14,7 +14,7 @@ const BottomNavbar = () => {
         <Link
           to="/"
           className={`flex flex-col items-center ${
-            location.pathname === "/" ? "text-purple-400" : isDark ? "text-gray-400" : "text-gray-500"
+            location.pathname === "/" ? "text-purple-500" : isDark ? "text-gray-400" : "text-gray-500"
           }`}
         >
           <Home size={24} />
@@ -24,14 +24,14 @@ const BottomNavbar = () => {
           to="/add-expense"
           className="flex flex-col items-center -mt-8"
         >
-          <div className="rounded-full bg-purple-400 p-4 shadow-lg">
+          <div className="rounded-full bg-purple-500 p-4 shadow-lg">
             <Plus size={24} color="white" />
           </div>
         </Link>
         <Link
           to="/statistics"
           className={`flex flex-col items-center ${
-            location.pathname === "/statistics" ? "text-purple-400" : isDark ? "text-gray-400" : "text-gray-500"
+            location.pathname === "/statistics" ? "text-purple-500" : isDark ? "text-gray-400" : "text-gray-500"
           }`}
         >
           <BarChart3 size={24} />

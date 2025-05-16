@@ -33,7 +33,6 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, index = 0 }) => {
           <CategoryIcon 
             category={expense.category} 
             size={isMobile ? 18 : 20} 
-            className="text-gray-700 dark:text-gray-300" 
           />
         </div>
         <div>

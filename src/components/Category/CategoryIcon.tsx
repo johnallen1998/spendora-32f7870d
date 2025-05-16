@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Category } from "../../types/expenses";
-import { ShoppingCart, Utensils, Car, Tv, ArrowDown } from "lucide-react";
+import { ShoppingCart, Utensils, Car, Tv } from "lucide-react";
 
 interface CategoryIconProps {
   category: Category;

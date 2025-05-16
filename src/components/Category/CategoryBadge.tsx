@@ -39,7 +39,11 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
           ${selected ? 'ring-2 ring-purple-500 scale-105' : ''} hover:scale-110 transition-transform`}
         style={{ backgroundColor: categoryInfo.color }}
       >
-        <CategoryIcon category={category} size={iconSize} className={`${selected ? 'text-purple-600' : 'text-gray-700'}`} />
+        <CategoryIcon 
+          category={category} 
+          size={iconSize} 
+          className={`${selected ? 'text-purple-500' : ''}`} 
+        />
       </div>
       <span className={`mt-1 text-xs text-center truncate w-14 ${selected ? 'font-bold text-purple-500' : ''}`}>
         {getCategoryName(category)}
