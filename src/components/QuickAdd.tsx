@@ -41,7 +41,7 @@ const QuickAdd: React.FC = () => {
   return (
     <>
       <Button
-        className="fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-lg"
+        className="fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-lg bg-purple-500 hover:bg-purple-600 text-white"
         onClick={() => setOpen(true)}
       >
         <Plus size={24} />

@@ -3,16 +3,15 @@ import React from "react";
 import { useAppContext } from "../context/AppContext";
 import TimeFrameSelector from "../components/TimeFrameSelector";
 import CategorySummary from "../components/CategorySummary";
-import { Category } from "../types/expenses";
 import { ChevronUp } from "lucide-react";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip } from "recharts";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { Line, LineChart, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
 
 const Statistics: React.FC = () => {
   const { userProfile, getFilteredExpenses, getCategoryTotal, getTotalExpenses, selectedTimeFrame } = useAppContext();
   const { currency } = userProfile;
   
-  const categories: Category[] = ["groceries", "food", "transportation", "entertainment"];
+  const categories = ["groceries", "food", "transportation", "entertainment"];
   const total = getTotalExpenses();
 
   // Generate data for the chart
@@ -27,9 +26,12 @@ const Statistics: React.FC = () => {
     });
 
     // Convert to array and sort by date
-    return Array.from(dateMap.entries())
+    const result = Array.from(dateMap.entries())
       .map(([date, amount]) => ({ date, amount }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    // If no data, return placeholder data point to avoid empty chart
+    return result.length ? result : [{ date: new Date().toLocaleDateString(), amount: 0 }];
   };
 
   const chartData = generateChartData();
@@ -97,7 +99,7 @@ const Statistics: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Expense Trend</h2>
-            <div className="bg-gray-100 rounded-full px-4 py-1 text-sm">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-1 text-sm">
               {selectedTimeFrame.replace("-", " ")}
             </div>
           </div>
@@ -114,81 +116,83 @@ const Statistics: React.FC = () => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
               <div className="text-sm text-gray-500">Total</div>
-              <div className="font-bold">{currency.symbol} {total}</div>
+              <div className="font-bold">{currency.symbol} {total.toFixed(2)}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Avg</div>
               <div className="font-bold">
-                {currency.symbol} {chartData.length ? (total / chartData.length).toFixed(0) : 0}
+                {currency.symbol} {chartData.length > 1 ? (total / (chartData.length || 1)).toFixed(2) : total.toFixed(2)}
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Max</div>
               <div className="font-bold">
-                {currency.symbol} {Math.max(...chartData.map(d => d.amount), 0)}
+                {currency.symbol} {Math.max(...chartData.map(d => Number(d.amount) || 0), 0).toFixed(2)}
               </div>
             </div>
           </div>
 
           <div className="h-64 w-full">
-            <ChartContainer
-              className="h-full"
-              config={{ amount: {} }}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="rounded-lg border bg-background p-2 shadow-sm">
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Date
-                                </span>
-                                <span className="font-bold text-sm">
-                                  {payload[0].payload.date}
-                                </span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Amount
-                                </span>
-                                <span className="font-bold text-sm">
-                                  {currency.symbol}{payload[0].value}
-                                </span>
+            {chartData.length > 0 && (
+              <ChartContainer
+                className="h-full"
+                config={{ amount: {} }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <ChartTooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="rounded-lg border bg-background p-2 shadow-sm">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex flex-col">
+                                  <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                    Date
+                                  </span>
+                                  <span className="font-bold text-sm">
+                                    {payload[0].payload.date}
+                                  </span>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                    Amount
+                                  </span>
+                                  <span className="font-bold text-sm">
+                                    {currency.symbol}{Number(payload[0].value).toFixed(2)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="amount"
-                    stroke="#9b87f5"
-                    strokeWidth={2}
-                    activeDot={{ r: 6, fill: "#9b87f5", strokeWidth: 0 }}
-                    dot={{ r: 4, strokeWidth: 0 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                          )
+                        }
+                        return null
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="amount"
+                      stroke="#9b87f5"
+                      strokeWidth={2}
+                      activeDot={{ r: 6, fill: "#9b87f5", strokeWidth: 0 }}
+                      dot={{ r: 4, strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            )}
           </div>
           <div className="flex justify-end mt-2">
             <div className="bg-orange-500 rounded-full px-4 py-1 text-white text-sm">
