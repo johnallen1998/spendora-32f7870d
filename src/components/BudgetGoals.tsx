@@ -9,7 +9,7 @@ import { Pencil } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
 const BudgetGoals: React.FC = () => {
-  const { categories, getCategoryInfo, getCategoryTotal, setBudgetLimit, getBudgetLimit } = useAppContext();
+  const { categories, getCategoryInfo, getCategoryTotal, setBudgetLimit, getBudgetLimit, userProfile } = useAppContext();
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [budgetAmount, setBudgetAmount] = useState<number>(0);
   
@@ -19,6 +19,11 @@ const BudgetGoals: React.FC = () => {
   };
   
   const handleSaveBudget = (categoryId: string) => {
+    if (budgetAmount < 0) {
+      toast.error("Budget amount cannot be negative");
+      return;
+    }
+    
     setBudgetLimit(categoryId, budgetAmount);
     setEditingCategory(null);
     toast.success("Budget limit updated");
@@ -66,6 +71,8 @@ const BudgetGoals: React.FC = () => {
                   onChange={(e) => setBudgetAmount(Number(e.target.value))}
                   className="w-full p-2 border rounded-md mr-2"
                   placeholder="Set budget amount"
+                  step="0.01"
+                  min="0"
                 />
                 <Button onClick={() => handleSaveBudget(category.id)}>Save</Button>
               </div>
@@ -73,10 +80,10 @@ const BudgetGoals: React.FC = () => {
               <>
                 <div className="flex justify-between text-sm mb-1">
                   <span className={isOverBudget ? "text-red-500 font-semibold" : ""}>
-                    {spent.toFixed(2)}
+                    {userProfile.currency.symbol}{spent.toFixed(2)}
                   </span>
                   {budget > 0 && (
-                    <span>{budget.toFixed(2)}</span>
+                    <span>{userProfile.currency.symbol}{budget.toFixed(2)}</span>
                   )}
                 </div>
                 
@@ -90,7 +97,7 @@ const BudgetGoals: React.FC = () => {
                 )}
                 
                 {isOverBudget && (
-                  <p className="text-xs text-red-500 mt-1">Over budget by {(spent - budget).toFixed(2)}</p>
+                  <p className="text-xs text-red-500 mt-1">Over budget by {userProfile.currency.symbol}{(spent - budget).toFixed(2)}</p>
                 )}
               </>
             )}
