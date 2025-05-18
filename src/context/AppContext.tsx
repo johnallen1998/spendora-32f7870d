@@ -1,6 +1,8 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Expense, TimeFrame, Category, UserProfile, Currency, AppTheme, CategoryInfo } from "../types/expenses";
+import { toast } from "@/components/ui/sonner";
+
+type SortOption = "date-desc" | "date-asc" | "amount-desc" | "amount-asc" | "title";
 
 type AppContextType = {
   expenses: Expense[];
@@ -20,6 +22,15 @@ type AppContextType = {
   addCategory: (category: Omit<CategoryInfo, "id">) => void;
   deleteCategory: (id: string) => void;
   getCategoryInfo: (categoryName: Category) => CategoryInfo;
+  sortOption: SortOption;
+  setSortOption: (option: SortOption) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  searchExpenses: (query: string) => Expense[];
+  clearFilters: () => void;
+  budgetLimits: Record<string, number>;
+  setBudgetLimit: (categoryId: string, amount: number) => void;
+  getBudgetLimit: (categoryId: string) => number;
 };
 
 const defaultCurrency: Currency = {
@@ -116,6 +127,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return defaultUserProfile;
   });
 
+  const [sortOption, setSortOption] = useState<SortOption>("date-desc");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [budgetLimits, setBudgetLimits] = useState<Record<string, number>>(() => {
+    const savedLimits = localStorage.getItem("budgetLimits");
+    return savedLimits ? JSON.parse(savedLimits) : {};
+  });
+
   useEffect(() => {
     localStorage.setItem("expenses", JSON.stringify(expenses));
   }, [expenses]);
@@ -129,12 +147,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     document.documentElement.className = userProfile.theme;
   }, [userProfile]);
 
+  useEffect(() => {
+    localStorage.setItem("budgetLimits", JSON.stringify(budgetLimits));
+  }, [budgetLimits]);
+
   const addExpense = (expense: Omit<Expense, "id">) => {
     const newExpense = {
       ...expense,
       id: Date.now().toString()
     };
     setExpenses(prev => [...prev, newExpense]);
+    toast.success("Expense added successfully!");
   };
 
   const deleteExpense = (id: string) => {
@@ -143,6 +166,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const clearAllData = () => {
     setExpenses([]);
+    toast.success("All expenses cleared!");
   };
 
   const filterByCategory = (category: Category | null) => {
@@ -151,6 +175,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateUserProfile = (profile: Partial<UserProfile>) => {
     setUserProfile(prev => ({ ...prev, ...profile }));
+    toast.success("Profile updated!");
   };
 
   const getFilteredExpenses = () => {
@@ -198,6 +223,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       filtered = filtered.filter(expense => expense.category === selectedCategory);
     }
     
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(expense => 
+        expense.title.toLowerCase().includes(query) || 
+        expense.category.toLowerCase().includes(query)
+      );
+    }
+    
+    // Sort results
+    switch (sortOption) {
+      case "date-desc":
+        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        break;
+      case "date-asc":
+        filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        break;
+      case "amount-desc":
+        filtered.sort((a, b) => b.amount - a.amount);
+        break;
+      case "amount-asc":
+        filtered.sort((a, b) => a.amount - b.amount);
+        break;
+      case "title":
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+    }
+    
     return filtered;
   };
 
@@ -218,19 +271,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isCustom: true
     };
     setCategories(prev => [...prev, newCategory]);
+    toast.success(`Category ${category.name} added!`);
   };
 
   const deleteCategory = (id: string) => {
     // Don't allow deletion of default categories
     if (defaultCategories.some(cat => cat.id === id)) {
+      toast.error("Cannot delete default category");
       return;
     }
     setCategories(prev => prev.filter(cat => cat.id !== id));
+    toast.success("Category deleted");
   };
 
   const getCategoryInfo = (categoryName: Category): CategoryInfo => {
     const category = categories.find(cat => cat.name === categoryName);
     return category || categories[0]; // Return first category as fallback
+  };
+
+  const searchExpenses = (query: string): Expense[] => {
+    setSearchQuery(query);
+    return getFilteredExpenses();
+  };
+
+  const clearFilters = () => {
+    setSelectedCategory(null);
+    setSearchQuery("");
+    setSelectedTimeFrame("today");
+    setSortOption("date-desc");
+    toast.info("All filters cleared");
+  };
+
+  const setBudgetLimit = (categoryId: string, amount: number) => {
+    setBudgetLimits(prev => ({
+      ...prev,
+      [categoryId]: amount
+    }));
+  };
+
+  const getBudgetLimit = (categoryId: string): number => {
+    return budgetLimits[categoryId] || 0;
   };
 
   const value = {
@@ -250,7 +330,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     categories,
     addCategory,
     deleteCategory,
-    getCategoryInfo
+    getCategoryInfo,
+    sortOption,
+    setSortOption,
+    searchQuery,
+    setSearchQuery,
+    searchExpenses,
+    clearFilters,
+    budgetLimits,
+    setBudgetLimit,
+    getBudgetLimit
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
