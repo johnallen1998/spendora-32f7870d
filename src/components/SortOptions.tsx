@@ -3,7 +3,7 @@ import React from "react";
 import { useAppContext } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Check, SortAscending, SortDescending } from "lucide-react";
+import { Check, ArrowDownAZ, ArrowUpZA } from "lucide-react";
 
 const SortOptions: React.FC = () => {
   const { sortOption, setSortOption } = useAppContext();
@@ -21,9 +21,9 @@ const SortOptions: React.FC = () => {
       <PopoverTrigger asChild>
         <Button variant="outline" className="px-3 py-1 h-9 text-sm">
           {sortOption === "date-desc" || sortOption === "amount-desc" ? (
-            <SortDescending size={16} className="mr-1" />
+            <ArrowDownAZ size={16} className="mr-1" />
           ) : (
-            <SortAscending size={16} className="mr-1" />
+            <ArrowUpZA size={16} className="mr-1" />
           )}
           Sort
         </Button>
