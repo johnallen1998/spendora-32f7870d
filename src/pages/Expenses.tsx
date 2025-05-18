@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import ExpenseCard from "../components/ExpenseCard";
-import { X, Filter, RefreshCw } from "lucide-react";
+import { X, Filter, SortAscending, RefreshCw } from "lucide-react";
 import SearchBar from "../components/SearchBar";
 import SortOptions from "../components/SortOptions";
 import QuickAdd from "../components/QuickAdd";

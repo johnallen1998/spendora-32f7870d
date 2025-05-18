@@ -21,15 +21,9 @@ const QuickAdd: React.FC = () => {
       return;
     }
     
-    const amountValue = parseFloat(amount);
-    if (isNaN(amountValue) || amountValue <= 0) {
-      toast.error("Please enter a valid amount");
-      return;
-    }
-    
     const newExpense = {
       title,
-      amount: amountValue,
+      amount: parseFloat(amount),
       category,
       date: new Date()
     };
@@ -47,7 +41,7 @@ const QuickAdd: React.FC = () => {
   return (
     <>
       <Button
-        className="fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-lg bg-purple-500 hover:bg-purple-600 text-white"
+        className="fixed bottom-20 right-4 h-14 w-14 rounded-full shadow-lg"
         onClick={() => setOpen(true)}
       >
         <Plus size={24} />
@@ -115,7 +109,7 @@ const QuickAdd: React.FC = () => {
               <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex items-center">
                 <X size={16} className="mr-1" /> Cancel
               </Button>
-              <Button type="submit" className="flex items-center bg-purple-500 hover:bg-purple-600 text-white">
+              <Button type="submit" className="flex items-center">
                 <Plus size={16} className="mr-1" /> Add
               </Button>
             </DialogFooter>
