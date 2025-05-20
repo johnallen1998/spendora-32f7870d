@@ -23,6 +23,7 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   const categoryInfo = getCategoryInfo(category);
   
   const getCategoryName = (cat: Category) => {
+    if (typeof cat !== 'string') return '';
     return cat.charAt(0).toUpperCase() + cat.slice(1);
   };
 
@@ -42,7 +43,7 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
         <CategoryIcon 
           category={category} 
           size={iconSize} 
-          className={`${selected ? 'text-purple-500' : ''}`} 
+          className={`${selected ? 'text-purple-500' : 'text-gray-700 dark:text-gray-200'}`} 
         />
       </div>
       <span className={`mt-1 text-xs text-center truncate w-14 ${selected ? 'font-bold text-purple-500' : ''}`}>

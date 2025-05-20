@@ -32,7 +32,7 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
             className="w-8 h-8 rounded-full flex items-center justify-center mr-2 animate-scale-in"
             style={{ backgroundColor: `${categoryInfo.color}30` }}
           >
-            <CategoryIcon category={category} size={16} />
+            <CategoryIcon category={category} size={16} className="text-gray-700 dark:text-gray-200" />
           </div>
           <span className="capitalize font-medium truncate max-w-[80px] text-sm">{category}</span>
         </div>

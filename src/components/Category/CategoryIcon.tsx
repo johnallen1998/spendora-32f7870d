@@ -11,7 +11,10 @@ interface CategoryIconProps {
 
 const CategoryIcon: React.FC<CategoryIconProps> = ({ category, size = 24, className = "" }) => {
   const getIconByCategory = () => {
-    switch (category.toLowerCase()) {
+    // Ensure we're working with lowercase category names for consistency
+    const categoryName = typeof category === 'string' ? category.toLowerCase() : '';
+    
+    switch (categoryName) {
       case "groceries":
         return <ShoppingCart size={size} className={className} />;
       case "food":
@@ -25,6 +28,7 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, size = 24, classN
       case "transit":
         return <Bus size={size} className={className} />;
       default:
+        // For any unknown category, default to ShoppingCart
         return <ShoppingCart size={size} className={className} />;
     }
   };

@@ -67,7 +67,11 @@ const Home: React.FC = () => {
                 className="w-12 h-12 rounded-full flex items-center justify-center mb-3 mx-auto"
                 style={{ backgroundColor: `${category.color}30` }}
               >
-                <CategoryIcon category={category.name} size={24} className="text-gray-700 dark:text-gray-200" />
+                <CategoryIcon 
+                  category={category.name} 
+                  size={24} 
+                  className="text-gray-700 dark:text-gray-200" 
+                />
               </div>
               <p className="text-gray-500 text-xs mb-1 capitalize truncate text-center">{category.name}</p>
               <h3 className="text-xl font-bold text-center">
