@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 
 const Expenses = () => {
   const navigate = useNavigate();
-  const { getFilteredExpenses, userProfile } = useAppContext();
+  const { getFilteredExpenses } = useAppContext();
 
   const expenses = getFilteredExpenses();
 
@@ -24,8 +24,8 @@ const Expenses = () => {
 
         {expenses.length > 0 ? (
           <div>
-            {expenses.map(expense => (
-              <ExpenseCard key={expense.id} expense={expense} />
+            {expenses.map((expense, index) => (
+              <ExpenseCard key={expense.id} expense={expense} index={index} />
             ))}
           </div>
         ) : (

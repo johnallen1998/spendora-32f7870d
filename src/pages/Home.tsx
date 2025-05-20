@@ -68,7 +68,7 @@ const Home: React.FC = () => {
                 style={{ backgroundColor: `${category.color}30` }}
               >
                 <CategoryIcon 
-                  category={category.name} 
+                  category={category.name as Category} 
                   size={24} 
                   className="text-gray-700 dark:text-gray-200" 
                 />
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
           {categories.slice(0, 4).map((category, index) => (
             <CategoryBadge
               key={category.id}
-              category={category.name}
+              category={category.name as Category}
               selected={selectedCategory === category.name}
               onClick={() => filterByCategory(selectedCategory === category.name ? null : category.name)}
               className={`stagger-delay-${index + 1}`}

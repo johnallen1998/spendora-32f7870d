@@ -38,7 +38,7 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
       <div 
         className={`${badgeSize} rounded-full flex items-center justify-center bg-opacity-20
           ${selected ? 'ring-2 ring-purple-500 scale-105' : ''} hover:scale-110 transition-transform`}
-        style={{ backgroundColor: categoryInfo.color }}
+        style={{ backgroundColor: categoryInfo?.color || "#F2FCE2" }}
       >
         <CategoryIcon 
           category={category} 

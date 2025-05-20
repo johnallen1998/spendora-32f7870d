@@ -30,7 +30,7 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
         <div className="flex items-center">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center mr-2 animate-scale-in"
-            style={{ backgroundColor: `${categoryInfo.color}30` }}
+            style={{ backgroundColor: categoryInfo?.color ? `${categoryInfo.color}30` : "#F2FCE230" }}
           >
             <CategoryIcon category={category} size={16} className="text-gray-700 dark:text-gray-200" />
           </div>
@@ -48,7 +48,7 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
           className="h-2 rounded-full transition-all duration-1000 ease-out"
           style={{ 
             width: `${percentage}%`,
-            backgroundColor: categoryInfo.color
+            backgroundColor: categoryInfo?.color || "#F2FCE2"
           }}
         ></div>
       </div>
