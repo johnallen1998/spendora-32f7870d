@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Expense, TimeFrame, Category, UserProfile, Currency, AppTheme, CategoryInfo } from "../types/expenses";
 
@@ -130,11 +129,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [userProfile]);
 
   const addExpense = (expense: Omit<Expense, "id">) => {
-    const newExpense = {
+    // Ensure category is valid
+    const validCategory = categories.some(cat => cat.name === expense.category);
+    const finalExpense = {
       ...expense,
+      // If category is not valid, set to default
+      category: validCategory ? expense.category : "groceries",
       id: Date.now().toString()
     };
-    setExpenses(prev => [...prev, newExpense]);
+    setExpenses(prev => [...prev, finalExpense]);
   };
 
   const deleteExpense = (id: string) => {
@@ -229,7 +232,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const getCategoryInfo = (categoryName: Category): CategoryInfo => {
-    const category = categories.find(cat => cat.name === categoryName);
+    if (!categoryName || typeof categoryName !== 'string') {
+      return categories[0]; // Return default category if invalid
+    }
+    
+    const category = categories.find(cat => cat.name === categoryName.toLowerCase());
     return category || categories[0]; // Return first category as fallback
   };
 

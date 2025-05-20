@@ -34,7 +34,9 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({
           >
             <CategoryIcon category={category} size={16} className="text-gray-700 dark:text-gray-200" />
           </div>
-          <span className="capitalize font-medium truncate max-w-[80px] text-sm">{category}</span>
+          <span className="capitalize font-medium truncate max-w-[80px] text-sm">
+            {typeof category === 'string' ? category : ''}
+          </span>
         </div>
         <div className="text-right">
           <span className="font-bold text-sm">{currency.symbol}{total.toFixed(2)}</span>

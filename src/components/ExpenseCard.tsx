@@ -28,7 +28,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, index = 0 }) => {
       <div className="flex items-center">
         <div 
           className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
-          style={{ backgroundColor: `${categoryInfo.color}30` }}
+          style={{ backgroundColor: categoryInfo ? `${categoryInfo.color}30` : '#F2FCE230' }}
         >
           <CategoryIcon 
             category={expense.category} 
@@ -38,7 +38,9 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, index = 0 }) => {
         </div>
         <div>
           <h3 className="font-semibold text-sm">{expense.title}</h3>
-          <p className="text-gray-500 dark:text-gray-400 text-xs capitalize">{expense.category}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-xs capitalize">
+            {typeof expense.category === 'string' ? expense.category : 'groceries'}
+          </p>
         </div>
       </div>
       <div className="text-right">

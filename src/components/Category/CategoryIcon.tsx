@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Category } from "../../types/expenses";
-import { ShoppingCart, Utensils, Car, Tv, Bus, Train } from "lucide-react";
+import { ShoppingCart, Utensils, Car, Tv, Bus, Train, Home, Coffee, Gift, Briefcase } from "lucide-react";
 
 interface CategoryIconProps {
   category: Category;
@@ -27,6 +27,14 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, size = 24, classN
         return <Train size={size} className={className} />;
       case "transit":
         return <Bus size={size} className={className} />;
+      case "home":
+        return <Home size={size} className={className} />;
+      case "coffee":
+        return <Coffee size={size} className={className} />;
+      case "gifts":
+        return <Gift size={size} className={className} />;
+      case "work":
+        return <Briefcase size={size} className={className} />;
       default:
         // For any unknown category, default to ShoppingCart
         return <ShoppingCart size={size} className={className} />;
