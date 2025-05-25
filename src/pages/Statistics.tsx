@@ -6,7 +6,7 @@ import CategorySummary from "../components/CategorySummary";
 import { Category } from "../types/expenses";
 import { ChevronUp, ChevronDown, TrendingUp } from "lucide-react";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
+import { Line, LineChart, XAxis, YAxis, CartesianGrid } from "recharts";
 
 const Statistics: React.FC = () => {
   const { userProfile, getFilteredExpenses, getCategoryTotal, getTotalExpenses, selectedTimeFrame } = useAppContext();
@@ -110,7 +110,13 @@ const Statistics: React.FC = () => {
               />
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">No expense data available.</p>
+            <div className="text-center py-8">
+              <div className="text-gray-400 mb-2">
+                <TrendingUp size={48} className="mx-auto mb-4 opacity-50" />
+              </div>
+              <p className="text-gray-500 mb-4">No expense data available for this time period.</p>
+              <p className="text-sm text-gray-400">Add some expenses to see your spending breakdown.</p>
+            </div>
           )}
         </div>
       </section>
@@ -124,100 +130,122 @@ const Statistics: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center text-sm text-purple-500 mb-4">
-            <TrendingUp className="w-4 h-4 mr-1" />
-            <span className="text-gray-500">
-              Showing overall spending trend for {selectedTimeFrame.replace("-", " ")}.
-            </span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div>
-              <div className="text-sm text-gray-500">Total</div>
-              <div className="font-bold">{currency.symbol} {total.toFixed(2)}</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Avg</div>
-              <div className="font-bold">
-                {currency.symbol} {chartData.length > 1 ? (total / chartData.length).toFixed(2) : "0.00"}
+          {chartData.length > 1 && chartData[0].date !== "No data" ? (
+            <>
+              <div className="flex items-center text-sm text-purple-500 mb-4">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                <span className="text-gray-500">
+                  Showing overall spending trend for {selectedTimeFrame.replace("-", " ")}.
+                </span>
               </div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Max</div>
-              <div className="font-bold">
-                {currency.symbol} {Math.max(...chartData.map(d => Number(d.amount) || 0), 0).toFixed(2)}
-              </div>
-            </div>
-          </div>
 
-          <div className="h-64 w-full">
-            <ChartContainer
-              className="h-full"
-              config={{ amount: {} }}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis
-                    dataKey="date"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                    padding={{ left: 10, right: 10 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                    width={40}
-                    tickFormatter={(value) => `${currency.symbol}${value}`}
-                  />
-                  <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="rounded-lg border bg-background p-2 shadow-sm">
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Date
-                                </span>
-                                <span className="font-bold text-sm">
-                                  {payload[0].payload.date}
-                                </span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Amount
-                                </span>
-                                <span className="font-bold text-sm">
-                                  {currency.symbol}{Number(payload[0].value).toFixed(2)}
-                                </span>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                  <div className="text-sm text-gray-500">Total</div>
+                  <div className="font-bold">{currency.symbol} {total.toFixed(2)}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Avg</div>
+                  <div className="font-bold">
+                    {currency.symbol} {(total / chartData.length).toFixed(2)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Max</div>
+                  <div className="font-bold">
+                    {currency.symbol} {Math.max(...chartData.map(d => Number(d.amount) || 0), 0).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-64 w-full">
+                <ChartContainer
+                  className="h-full w-full"
+                  config={{ amount: {} }}
+                >
+                  <LineChart 
+                    width={400} 
+                    height={250} 
+                    data={chartData} 
+                    margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12 }}
+                      padding={{ left: 10, right: 10 }}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12 }}
+                      width={40}
+                      tickFormatter={(value) => `${currency.symbol}${value}`}
+                    />
+                    <ChartTooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="rounded-lg border bg-background p-2 shadow-sm">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex flex-col">
+                                  <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                    Date
+                                  </span>
+                                  <span className="font-bold text-sm">
+                                    {payload[0].payload.date}
+                                  </span>
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                    Amount
+                                  </span>
+                                  <span className="font-bold text-sm">
+                                    {currency.symbol}{Number(payload[0].value).toFixed(2)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="amount"
-                    stroke="#9b87f5"
-                    strokeWidth={2}
-                    activeDot={{ r: 6, fill: "#9b87f5", strokeWidth: 0 }}
-                    dot={{ r: 4, fill: "#9b87f5", strokeWidth: 0 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </div>
-          <div className="flex justify-end mt-2">
-            <div className={`rounded-full px-4 py-1 text-white text-sm ${chartData.length <= 1 ? 'bg-gray-400' : 'bg-purple-500'}`}>
-              {chartData.length <= 1 ? 'No trend' : 'Stable'}
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="amount"
+                      stroke="#9b87f5"
+                      strokeWidth={2}
+                      activeDot={{ r: 6, fill: "#9b87f5", strokeWidth: 0 }}
+                      dot={{ r: 4, fill: "#9b87f5", strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ChartContainer>
+              </div>
+              <div className="flex justify-end mt-2">
+                <div className="rounded-full px-4 py-1 text-white text-sm bg-purple-500">
+                  Stable
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <TrendingUp size={48} className="mx-auto opacity-50" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                No trend data available
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Add more expenses over multiple days to see your spending trend.
+              </p>
+              <p className="text-sm text-gray-400">
+                Charts require at least 2 data points to display properly.
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </section>
     </div>

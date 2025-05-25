@@ -1,7 +1,18 @@
 
 import React from "react";
 import { Category } from "../../types/expenses";
-import { ShoppingCart, Utensils, Bus, Car, Train } from "lucide-react";
+import { 
+  ShoppingCart, 
+  Utensils, 
+  Car, 
+  Gamepad2, 
+  Plane, 
+  Bus, 
+  Home, 
+  Coffee, 
+  Gift, 
+  Briefcase 
+} from "lucide-react";
 
 interface CategoryIconProps {
   category: Category;
@@ -20,21 +31,21 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, size = 24, classN
       case "food":
         return <Utensils size={size} className={className} />;
       case "transportation":
-        return <Bus size={size} className={className} />;
-      case "entertainment":
-        return <Train size={size} className={className} />;
-      case "travel":
         return <Car size={size} className={className} />;
+      case "entertainment":
+        return <Gamepad2 size={size} className={className} />;
+      case "travel":
+        return <Plane size={size} className={className} />;
       case "transit":
         return <Bus size={size} className={className} />;
       case "home":
-        return <ShoppingCart size={size} className={className} />;
+        return <Home size={size} className={className} />;
       case "coffee":
-        return <Utensils size={size} className={className} />;
+        return <Coffee size={size} className={className} />;
       case "gifts":
-        return <ShoppingCart size={size} className={className} />;
+        return <Gift size={size} className={className} />;
       case "work":
-        return <Car size={size} className={className} />;
+        return <Briefcase size={size} className={className} />;
       default:
         // For any unknown category, default to ShoppingCart
         return <ShoppingCart size={size} className={className} />;
