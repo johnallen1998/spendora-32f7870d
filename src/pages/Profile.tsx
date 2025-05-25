@@ -59,6 +59,10 @@ const Profile: React.FC = () => {
   const toggleTheme = () => {
     const newTheme = userProfile.theme === "light" ? "dark" : "light";
     updateUserProfile({ theme: newTheme });
+    toast({
+      title: "Theme Updated", 
+      description: `Switched to ${newTheme} mode`
+    });
   };
 
   const handleClearData = () => {
@@ -86,47 +90,64 @@ const Profile: React.FC = () => {
   };
 
   const handleExport = (format: string) => {
-    const expenses = localStorage.getItem("expenses") || "[]";
-    const data = JSON.parse(expenses);
-    
-    let exportData: string;
-    let mimeType: string;
-    let fileExtension: string;
-    
-    if (format === "CSV") {
-      // Convert to CSV
-      const header = "id,title,amount,category,date,notes\n";
-      const csvData = data.map((expense: any) => 
-        `${expense.id},"${expense.title}",${expense.amount},"${expense.category}","${expense.date}","${expense.notes || ''}"`
-      ).join("\n");
-      exportData = header + csvData;
-      mimeType = "text/csv";
-      fileExtension = "csv";
-    } else {
-      // JSON format
-      exportData = JSON.stringify(data, null, 2);
-      mimeType = "application/json";
-      fileExtension = "json";
+    try {
+      const expenses = localStorage.getItem("expenses") || "[]";
+      const data = JSON.parse(expenses);
+      
+      let exportData: string;
+      let mimeType: string;
+      let fileExtension: string;
+      
+      if (format === "CSV") {
+        // Convert to CSV
+        const header = "id,title,amount,category,date,notes\n";
+        const csvData = data.map((expense: any) => 
+          `${expense.id},"${expense.title}",${expense.amount},"${expense.category}","${expense.date}","${expense.notes || ''}"`
+        ).join("\n");
+        exportData = header + csvData;
+        mimeType = "text/csv";
+        fileExtension = "csv";
+      } else {
+        // JSON format
+        exportData = JSON.stringify(data, null, 2);
+        mimeType = "application/json";
+        fileExtension = "json";
+      }
+      
+      const blob = new Blob([exportData], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `spendora-expenses.${fileExtension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Data Exported",
+        description: `Your data has been exported in ${format} format.`
+      });
+      setOpenSheet("");
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting your data. Please try again.",
+        variant: "destructive"
+      });
     }
-    
-    const blob = new Blob([exportData], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `spendora-expenses.${fileExtension}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Data Exported",
-      description: `Your data has been exported in ${format} format.`
-    });
-    setOpenSheet("");
   };
 
   const handleEditName = () => {
-    updateUserProfile({ name });
+    if (name.trim() === "") {
+      toast({
+        title: "Invalid Name",
+        description: "Please enter a valid name.",
+        variant: "destructive"
+      });
+      return;
+    }
+    updateUserProfile({ name: name.trim() });
     setOpenSheet("");
     toast({
       title: "Name Updated",
@@ -137,18 +158,33 @@ const Profile: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
           setProfileImage(e.target.result as string);
+          toast({
+            title: "Profile Picture Updated",
+            description: "Your profile picture has been updated"
+          });
         }
       };
+      reader.onerror = () => {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive"
+        });
+      };
       reader.readAsDataURL(file);
-      
-      toast({
-        title: "Profile Picture Updated",
-        description: "Your profile picture has been updated"
-      });
     }
   };
   
@@ -162,7 +198,11 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-black p-4 pb-32">
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <button onClick={() => navigate(-1)} className="p-2">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            aria-label="Go back"
+          >
             <X size={24} />
           </button>
           <h1 className="text-2xl font-bold">Profile</h1>
@@ -182,7 +222,8 @@ const Profile: React.FC = () => {
           <h2 className="text-3xl font-bold">{userProfile.name}</h2>
           <button 
             onClick={() => setOpenSheet("editName")}
-            className="mt-4 text-purple-500 border border-purple-500 rounded-full px-6 py-2"
+            className="mt-4 text-purple-500 border border-purple-500 rounded-full px-6 py-2 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            aria-label="Edit profile information"
           >
             Edit Profile
           </button>
@@ -193,7 +234,8 @@ const Profile: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg divide-y">
             <button
               onClick={() => setOpenSheet("currency")}
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              aria-label={`Change default currency, currently set to ${userProfile.currency.name}`}
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
@@ -209,7 +251,8 @@ const Profile: React.FC = () => {
 
             <button
               onClick={toggleTheme}
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              aria-label={`Switch to ${userProfile.theme === "light" ? "dark" : "light"} mode`}
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
@@ -229,7 +272,8 @@ const Profile: React.FC = () => {
 
             <button
               onClick={() => setOpenSheet("support")}
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              aria-label="Support the app development"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
@@ -256,8 +300,9 @@ const Profile: React.FC = () => {
             </div>
 
             <button 
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
               onClick={() => setOpenSheet("about")}
+              aria-label="Learn more about Spendora"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
@@ -275,7 +320,8 @@ const Profile: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg divide-y">
             <button
               onClick={() => setOpenSheet("export")}
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              aria-label="Export your expense data"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
@@ -288,7 +334,8 @@ const Profile: React.FC = () => {
 
             <button
               onClick={handleClearData}
-              className="w-full flex items-center justify-between p-4"
+              className="w-full flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset"
+              aria-label="Clear all expense data - this action cannot be undone"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
