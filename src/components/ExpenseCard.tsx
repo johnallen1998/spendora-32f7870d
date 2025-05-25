@@ -24,25 +24,27 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, index = 0 }) => {
   return (
     <div 
       className={`p-3 mb-3 shadow-sm flex justify-between items-center rounded-xl animate-fade-in ${delayClass} hover:shadow-md transition-all hover:translate-y-[-2px] ${
-        isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+        isDark 
+          ? "bg-gray-900 border-gray-800 hover:bg-gray-800/50" 
+          : "bg-white border-gray-200"
       }`}
     >
       <div className="flex items-center">
         <div 
           className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
-          style={{ backgroundColor: categoryInfo ? `${categoryInfo.color}30` : '#F2FCE230' }}
+          style={{ backgroundColor: categoryInfo ? (isDark ? `${categoryInfo.color}40` : `${categoryInfo.color}30`) : (isDark ? '#F2FCE240' : '#F2FCE230') }}
         >
           <CategoryIcon 
             category={expense.category} 
             size={isMobile ? 18 : 20}
-            className="text-gray-700 dark:text-gray-200"
+            className={isDark ? "text-white" : "text-gray-700"}
           />
         </div>
         <div>
           <h3 className={`font-semibold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>
             {expense.title}
           </h3>
-          <p className={`text-xs capitalize ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+          <p className={`text-xs capitalize ${isDark ? "text-gray-300" : "text-gray-500"}`}>
             {typeof expense.category === 'string' ? expense.category : 'groceries'}
           </p>
         </div>
@@ -51,7 +53,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, index = 0 }) => {
         <p className={`font-bold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>
           {currency.symbol}{expense.amount.toFixed(2)}
         </p>
-        <p className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+        <p className={`text-[10px] ${isDark ? "text-gray-300" : "text-gray-500"}`}>
           {format(new Date(expense.date), "d MMM yyyy")}
         </p>
       </div>

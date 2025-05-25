@@ -25,9 +25,9 @@ const TimeFrameSelector: React.FC = () => {
           onClick={() => setSelectedTimeFrame(frame.value)}
           className={`px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all duration-200 stagger-delay-${index + 1} animate-fade-in
             ${selectedTimeFrame === frame.value
-              ? "bg-purple-500 text-white scale-105"
+              ? "bg-purple-600 text-white scale-105 shadow-lg"
               : isDark 
-                ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                ? "bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
         >

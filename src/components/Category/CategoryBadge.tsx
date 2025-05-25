@@ -18,8 +18,9 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   onClick,
   className = ""
 }) => {
-  const { getCategoryInfo } = useAppContext();
+  const { getCategoryInfo, userProfile } = useAppContext();
   const isMobile = useIsMobile();
+  const isDark = userProfile.theme === "dark";
   const categoryInfo = getCategoryInfo(category);
   
   const getCategoryName = (cat: Category) => {
@@ -37,16 +38,23 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({
     >
       <div 
         className={`${badgeSize} rounded-full flex items-center justify-center bg-opacity-20
-          ${selected ? 'ring-2 ring-purple-500 scale-105' : ''} hover:scale-110 transition-transform`}
+          ${selected ? (isDark ? 'ring-2 ring-purple-400 scale-105' : 'ring-2 ring-purple-500 scale-105') : ''} hover:scale-110 transition-transform`}
         style={{ backgroundColor: categoryInfo?.color || "#F2FCE2" }}
       >
         <CategoryIcon 
           category={category} 
           size={iconSize} 
-          className={`${selected ? 'text-purple-500' : 'text-gray-700 dark:text-gray-200'}`} 
+          className={`${selected 
+            ? (isDark ? 'text-purple-400' : 'text-purple-500') 
+            : (isDark ? 'text-white' : 'text-gray-700')
+          }`} 
         />
       </div>
-      <span className={`mt-1 text-xs text-center truncate w-14 ${selected ? 'font-bold text-purple-500' : ''}`}>
+      <span className={`mt-1 text-xs text-center truncate w-14 ${
+        selected 
+          ? (isDark ? 'font-bold text-purple-400' : 'font-bold text-purple-500')
+          : (isDark ? 'text-gray-300' : 'text-gray-700')
+      }`}>
         {getCategoryName(category)}
       </span>
     </div>
