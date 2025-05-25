@@ -6,8 +6,9 @@ import { Card } from "./ui/card";
 import { useIsMobile } from "../hooks/use-mobile";
 
 const TimeFrameSelector: React.FC = () => {
-  const { selectedTimeFrame, setSelectedTimeFrame } = useAppContext();
+  const { selectedTimeFrame, setSelectedTimeFrame, userProfile } = useAppContext();
   const isMobile = useIsMobile();
+  const isDark = userProfile.theme === "dark";
 
   const timeFrames: { value: TimeFrame; label: string }[] = [
     { value: "today", label: "Today" },
@@ -25,7 +26,9 @@ const TimeFrameSelector: React.FC = () => {
           className={`px-4 py-2 rounded-full whitespace-nowrap text-sm transition-all duration-200 stagger-delay-${index + 1} animate-fade-in
             ${selectedTimeFrame === frame.value
               ? "bg-purple-500 text-white scale-105"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              : isDark 
+                ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
         >
           {frame.label}

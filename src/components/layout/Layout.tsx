@@ -21,7 +21,9 @@ const Layout = ({ children }: LayoutProps) => {
   }, [location.pathname]);
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-gray-950 text-white" : "bg-gray-50"} transition-colors duration-300`}>
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+    }`}>
       <div className={`mx-auto ${isMobile ? "max-w-md" : "max-w-xl"} overflow-x-hidden`}>
         <div className="animate-fade-in">
           {children}
