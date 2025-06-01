@@ -1,9 +1,10 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { X, ChevronRight, Moon, Sun, Heart, Info, FileUp, Trash2, DollarSign, Pencil, Search } from "lucide-react";
+import { X, ChevronRight, Moon, Sun, Info, FileUp, Trash2, DollarSign, Pencil, Search } from "lucide-react";
 import { Currency } from "../types/expenses";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -11,13 +12,14 @@ import { currencyList, getCurrenciesByRegion, getPopularCurrencies } from "../ut
 
 const Profile: React.FC = () => {
   const { userProfile, updateUserProfile, clearAllData } = useAppContext();
-  const [openSheet, setOpenSheet] = useState<"" | "currency" | "support" | "export" | "editName" | "about">("");
+  const [openSheet, setOpenSheet] = useState<"" | "currency" | "export" | "editName" | "about">("");
   const [name, setName] = useState(userProfile.name);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
+  const isDark = userProfile.theme === "dark";
 
   const regions = [
     { id: "popular", name: "Popular" },
@@ -73,20 +75,6 @@ const Profile: React.FC = () => {
         description: "All expense data has been removed."
       });
     }
-  };
-
-  const supportOptions = [
-    { title: "Coffee for the Developer", description: "Help fuel development with a coffee!", price: 99 },
-    { title: "Lunch for the Team", description: "Helps power new features and timely updates.", price: 499 },
-    { title: "Premium Supporter", description: "You're propelling Spendora to new heights :)", price: 999 }
-  ];
-
-  const handleSupport = (option: typeof supportOptions[0]) => {
-    toast({
-      title: "Thank You!",
-      description: `Thank you for your support of ${option.price} ${userProfile.currency.code}!`
-    });
-    setOpenSheet("");
   };
 
   const handleExport = (format: string) => {
@@ -195,155 +183,165 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black p-4 pb-32">
-      <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-6">
+    <div className={`min-h-screen p-3 pb-24 ${
+      isDark ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+    }`}>
+      <div className="max-w-sm mx-auto">
+        <div className="flex items-center justify-between mb-4">
           <button 
             onClick={() => navigate(-1)} 
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className={`p-2 rounded-full transition-colors ${
+              isDark ? "hover:bg-gray-800" : "hover:bg-gray-100"
+            }`}
             aria-label="Go back"
           >
-            <X size={24} />
+            <X size={20} className={isDark ? "text-gray-200" : "text-gray-700"} />
           </button>
-          <h1 className="text-2xl font-bold">Profile</h1>
+          <h1 className={`text-xl font-bold ${isDark ? "text-gray-100" : "text-gray-900"}`}>Profile</h1>
           <div className="w-8"></div>
         </div>
 
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-4 overflow-hidden" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mb-3 overflow-hidden" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-4xl font-semibold text-white">
+              <span className="text-3xl font-semibold text-white">
                 {userProfile.name.charAt(0)}
               </span>
             )}
           </div>
-          <h2 className="text-3xl font-bold">{userProfile.name}</h2>
+          <h2 className={`text-2xl font-bold ${isDark ? "text-gray-100" : "text-gray-900"}`}>{userProfile.name}</h2>
           <button 
             onClick={() => setOpenSheet("editName")}
-            className="mt-4 text-purple-500 border border-purple-500 rounded-full px-6 py-2 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            className="mt-3 text-purple-400 border border-purple-400 rounded-full px-5 py-2 text-sm hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             aria-label="Edit profile information"
           >
             Edit Profile
           </button>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Settings</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg divide-y">
+        <div className="mb-6">
+          <h2 className={`text-lg font-bold mb-3 ${isDark ? "text-gray-100" : "text-gray-900"}`}>Settings</h2>
+          <div className={`rounded-lg divide-y ${
+            isDark ? "bg-gray-800 divide-gray-700" : "bg-white divide-gray-200"
+          }`}>
             <button
               onClick={() => setOpenSheet("currency")}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              className={`w-full flex items-center justify-between p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"
+              }`}
               aria-label={`Change default currency, currently set to ${userProfile.currency.name}`}
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                  <DollarSign className="text-purple-500" size={20} />
+                <div className="w-9 h-9 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                  <DollarSign className="text-purple-500" size={18} />
                 </div>
-                <span>Default Currency</span>
+                <span className={`text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Default Currency</span>
               </div>
-              <div className="flex items-center text-gray-500">
-                <span className="mr-2">{userProfile.currency.symbol} {userProfile.currency.code}</span>
-                <ChevronRight size={18} />
+              <div className="flex items-center">
+                <span className={`mr-2 text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+                  {userProfile.currency.symbol} {userProfile.currency.code}
+                </span>
+                <ChevronRight size={16} className={isDark ? "text-gray-400" : "text-gray-500"} />
               </div>
             </button>
 
             <button
               onClick={toggleTheme}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              className={`w-full flex items-center justify-between p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"
+              }`}
               aria-label={`Switch to ${userProfile.theme === "light" ? "dark" : "light"} mode`}
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                <div className="w-9 h-9 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
                   {userProfile.theme === "light" ? (
-                    <Sun className="text-purple-500" size={20} />
+                    <Sun className="text-purple-500" size={18} />
                   ) : (
-                    <Moon className="text-purple-500" size={20} />
+                    <Moon className="text-purple-500" size={18} />
                   )}
                 </div>
-                <span>Appearance</span>
+                <span className={`text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Appearance</span>
               </div>
-              <div className="flex items-center text-gray-500">
-                <span className="mr-2 capitalize">{userProfile.theme}</span>
-                <ChevronRight size={18} />
-              </div>
-            </button>
-
-            <button
-              onClick={() => setOpenSheet("support")}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
-              aria-label="Support the app development"
-            >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
-                  <Heart className="text-red-500" size={20} />
-                </div>
-                <span>Support the App</span>
+                <span className={`mr-2 capitalize text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+                  {userProfile.theme}
+                </span>
+                <ChevronRight size={16} className={isDark ? "text-gray-400" : "text-gray-500"} />
               </div>
-              <ChevronRight size={18} className="text-gray-500" />
             </button>
           </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">App Info</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg divide-y">
-            <div className="flex items-center justify-between p-4">
+        <div className="mb-6">
+          <h2 className={`text-lg font-bold mb-3 ${isDark ? "text-gray-100" : "text-gray-900"}`}>App Info</h2>
+          <div className={`rounded-lg divide-y ${
+            isDark ? "bg-gray-800 divide-gray-700" : "bg-white divide-gray-200"
+          }`}>
+            <div className="flex items-center justify-between p-3">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                  <Info className="text-purple-500" size={20} />
+                <div className="w-9 h-9 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                  <Info className="text-purple-500" size={18} />
                 </div>
-                <span>Version</span>
+                <span className={`text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Version</span>
               </div>
-              <span className="text-gray-500">1.0.3 (3)</span>
+              <span className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>1.0.3 (3)</span>
             </div>
 
             <button 
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              className={`w-full flex items-center justify-between p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"
+              }`}
               onClick={() => setOpenSheet("about")}
               aria-label="Learn more about Spendora"
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                  <Info className="text-purple-500" size={20} />
+                <div className="w-9 h-9 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                  <Info className="text-purple-500" size={18} />
                 </div>
-                <span>About Spendora</span>
+                <span className={`text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>About Spendora</span>
               </div>
-              <ChevronRight size={18} className="text-gray-500" />
+              <ChevronRight size={16} className={isDark ? "text-gray-400" : "text-gray-500"} />
             </button>
           </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Data Management</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg divide-y">
+        <div className="mb-6">
+          <h2 className={`text-lg font-bold mb-3 ${isDark ? "text-gray-100" : "text-gray-900"}`}>Data Management</h2>
+          <div className={`rounded-lg divide-y ${
+            isDark ? "bg-gray-800 divide-gray-700" : "bg-white divide-gray-200"
+          }`}>
             <button
               onClick={() => setOpenSheet("export")}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset"
+              className={`w-full flex items-center justify-between p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"
+              }`}
               aria-label="Export your expense data"
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                  <FileUp className="text-purple-500" size={20} />
+                <div className="w-9 h-9 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                  <FileUp className="text-purple-500" size={18} />
                 </div>
-                <span>Export Data</span>
+                <span className={`text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Export Data</span>
               </div>
-              <ChevronRight size={18} className="text-gray-500" />
+              <ChevronRight size={16} className={isDark ? "text-gray-400" : "text-gray-500"} />
             </button>
 
             <button
               onClick={handleClearData}
-              className="w-full flex items-center justify-between p-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset"
+              className={`w-full flex items-center justify-between p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset ${
+                isDark ? "hover:bg-red-900/20" : "hover:bg-red-50"
+              }`}
               aria-label="Clear all expense data - this action cannot be undone"
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
-                  <Trash2 className="text-red-500" size={20} />
+                <div className="w-9 h-9 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
+                  <Trash2 className="text-red-500" size={18} />
                 </div>
-                <span className="text-red-500">Clear All Data</span>
+                <span className="text-red-500 text-sm">Clear All Data</span>
               </div>
-              <ChevronRight size={18} className="text-gray-500" />
+              <ChevronRight size={16} className={isDark ? "text-gray-400" : "text-gray-500"} />
             </button>
           </div>
         </div>
@@ -354,15 +352,15 @@ const Profile: React.FC = () => {
         <SheetContent side="bottom" className="h-[40%]">
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
-              <SheetTitle className="text-2xl">Edit Profile</SheetTitle>
-              <button onClick={() => setOpenSheet("")} className="text-gray-500">
+              <SheetTitle className="text-xl">Edit Profile</SheetTitle>
+              <button onClick={() => setOpenSheet("")} className={isDark ? "text-gray-300" : "text-gray-500"}>
                 Cancel
               </button>
             </div>
           </SheetHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Name</label>
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : "text-gray-900"}`}>Name</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -371,13 +369,13 @@ const Profile: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Profile Picture</label>
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-gray-200" : "text-gray-900"}`}>Profile Picture</label>
               <div className="flex items-center">
-                <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center mr-3" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
+                <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center mr-3" style={{backgroundColor: profileImage ? 'transparent' : '#A78BFA'}}>
                   {profileImage ? (
                     <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-2xl font-semibold text-white">
+                    <span className="text-xl font-semibold text-white">
                       {name.charAt(0)}
                     </span>
                   )}
@@ -385,9 +383,9 @@ const Profile: React.FC = () => {
                 <Button 
                   variant="outline" 
                   onClick={triggerFileInput}
-                  className="text-purple-500"
+                  className="text-purple-500 text-sm"
                 >
-                  <Pencil size={16} className="mr-2" />
+                  <Pencil size={14} className="mr-2" />
                   Change Photo
                 </Button>
                 <input 
@@ -414,32 +412,32 @@ const Profile: React.FC = () => {
         <SheetContent side="bottom" className="h-[80%]">
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
-              <SheetTitle className="text-2xl">About Spendora</SheetTitle>
-              <button onClick={() => setOpenSheet("")} className="text-gray-500">
+              <SheetTitle className="text-xl">About Spendora</SheetTitle>
+              <button onClick={() => setOpenSheet("")} className={isDark ? "text-gray-300" : "text-gray-500"}>
                 Done
               </button>
             </div>
           </SheetHeader>
           
-          <div className="flex flex-col items-center py-8">
-            <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
-              <span className="text-3xl font-semibold text-white">S</span>
+          <div className="flex flex-col items-center py-6">
+            <div className="w-16 h-16 bg-purple-400 rounded-full flex items-center justify-center mb-3">
+              <span className="text-2xl font-semibold text-white">S</span>
             </div>
-            <h2 className="text-3xl font-bold mb-2">Spendora</h2>
-            <p className="text-gray-500 mb-2">Version 1.0.3 (3)</p>
+            <h2 className="text-2xl font-bold mb-2">Spendora</h2>
+            <p className={`mb-2 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>Version 1.0.3 (3)</p>
             
-            <div className="mt-8 space-y-6 w-full text-left">
+            <div className="mt-6 space-y-4 w-full text-left">
               <div>
-                <h3 className="font-bold mb-2">About</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <h3 className={`font-bold mb-2 text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>About</h3>
+                <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
                   Spendora is an elegant expense tracking solution designed to bring clarity to your finances. 
                   With intuitive tracking tools and beautiful visualizations, managing your money has never been more delightful.
                 </p>
               </div>
               
               <div>
-                <h3 className="font-bold mb-2">Features</h3>
-                <ul className="list-disc pl-5 text-gray-600 dark:text-gray-400 space-y-1">
+                <h3 className={`font-bold mb-2 text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Features</h3>
+                <ul className={`list-disc pl-5 space-y-1 text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
                   <li>Smart expense tracking</li>
                   <li>Customizable categories</li>
                   <li>Beautiful spending visualizations</li>
@@ -450,14 +448,14 @@ const Profile: React.FC = () => {
               </div>
               
               <div>
-                <h3 className="font-bold mb-2">Credits</h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <h3 className={`font-bold mb-2 text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>Credits</h3>
+                <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-600"}`}>
                   Crafted with ❤️ by the Spendora team.
                 </p>
               </div>
               
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-sm text-gray-500 text-center">
+              <div className={`pt-4 border-t ${isDark ? "border-gray-700" : "border-gray-200"}`}>
+                <p className={`text-xs text-center ${isDark ? "text-gray-500" : "text-gray-500"}`}>
                   © 2025 Spendora. All rights reserved.
                 </p>
               </div>
@@ -471,18 +469,20 @@ const Profile: React.FC = () => {
         <SheetContent side="bottom" className="h-[80%]">
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
-              <SheetTitle className="text-2xl">Select Currency</SheetTitle>
-              <button onClick={() => setOpenSheet("")} className="text-gray-500">
+              <SheetTitle className="text-xl">Select Currency</SheetTitle>
+              <button onClick={() => setOpenSheet("")} className={isDark ? "text-gray-300" : "text-gray-500"}>
                 Done
               </button>
             </div>
           </SheetHeader>
           <div className="mb-4 relative">
-            <Search className="absolute left-3 top-3 text-gray-500" size={18} />
+            <Search className={`absolute left-3 top-3 ${isDark ? "text-gray-400" : "text-gray-500"}`} size={16} />
             <input
               type="text"
               placeholder="Search currencies..."
-              className="w-full p-3 pl-10 bg-gray-100 dark:bg-gray-800 rounded-lg"
+              className={`w-full p-3 pl-10 rounded-lg text-sm ${
+                isDark ? "bg-gray-800 text-gray-200 placeholder-gray-400" : "bg-gray-100 text-gray-900 placeholder-gray-500"
+              }`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -492,48 +492,50 @@ const Profile: React.FC = () => {
             {regions.map((region) => (
               <button 
                 key={region.id}
-                className={`whitespace-nowrap ${
+                className={`whitespace-nowrap text-sm px-4 py-2 rounded-full ${
                   selectedRegion === region.id 
                   ? "bg-purple-500 text-white" 
-                  : "bg-gray-100 dark:bg-gray-800"
-                } px-6 py-2 rounded-full`}
+                  : isDark ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-700"
+                }`}
                 onClick={() => setSelectedRegion(region.id)}
               >
                 {region.name}
               </button>
             ))}
             <button 
-              className={`whitespace-nowrap ${
+              className={`whitespace-nowrap text-sm px-4 py-2 rounded-full ${
                 selectedRegion === "all" 
                 ? "bg-purple-500 text-white" 
-                : "bg-gray-100 dark:bg-gray-800"
-              } px-6 py-2 rounded-full`}
+                : isDark ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-700"
+              }`}
               onClick={() => setSelectedRegion("all")}
             >
               All
             </button>
           </div>
 
-          <div className="divide-y overflow-y-auto max-h-[calc(100%-160px)]">
+          <div className="divide-y overflow-y-auto max-h-[calc(100%-140px)]">
             {getDisplayedCurrencies().map((currency) => (
               <button
                 key={currency.code}
-                className={`w-full flex items-center justify-between p-4 ${
-                  userProfile.currency.code === currency.code ? "bg-purple-50 dark:bg-purple-900/20" : ""
+                className={`w-full flex items-center justify-between p-3 text-sm ${
+                  userProfile.currency.code === currency.code 
+                    ? isDark ? "bg-purple-900/20" : "bg-purple-50" 
+                    : ""
                 }`}
                 onClick={() => handleCurrencySelect(currency)}
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 flex items-center justify-center mr-4 font-bold">
+                  <div className="w-8 h-8 flex items-center justify-center mr-3 font-bold">
                     {currency.symbol}
                   </div>
                   <div className="text-left">
-                    <div>{currency.code}</div>
-                    <div className="text-gray-500">{currency.name}</div>
+                    <div className={isDark ? "text-gray-200" : "text-gray-900"}>{currency.code}</div>
+                    <div className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>{currency.name}</div>
                   </div>
                 </div>
                 {userProfile.currency.code === currency.code && (
-                  <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
@@ -543,86 +545,60 @@ const Profile: React.FC = () => {
         </SheetContent>
       </Sheet>
 
-      <Sheet open={openSheet === "support"} onOpenChange={() => setOpenSheet("")}>
-        <SheetContent side="bottom" className="h-[80%]">
-          <div className="flex flex-col items-center py-8">
-            <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
-              <Heart className="text-white" size={40} />
-            </div>
-            <h2 className="text-3xl font-bold mb-2">Support Spendora</h2>
-            <p className="text-gray-500 text-center mb-8">
-              Your support enables us to continue improving Spendora and bring you new features. Every contribution makes a difference!
-            </p>
-
-            {supportOptions.map((option) => (
-              <div key={option.title} className="w-full mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-bold">{option.title}</h3>
-                  <span className="text-xl font-bold">{userProfile.currency.symbol} {option.price}</span>
-                </div>
-                <p className="text-gray-500 mb-2">{option.description}</p>
-                <Button 
-                  onClick={() => handleSupport(option)}
-                  className="w-full bg-purple-500 hover:bg-purple-600 text-white"
-                >
-                  Support
-                </Button>
-              </div>
-            ))}
-          </div>
-        </SheetContent>
-      </Sheet>
-
       <Sheet open={openSheet === "export"} onOpenChange={() => setOpenSheet("")}>
         <SheetContent side="bottom" className="h-[80%]">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Export Data</h2>
+            <h2 className="text-xl font-bold">Export Data</h2>
             <button onClick={() => setOpenSheet("")} className="text-purple-500">
               Done
             </button>
           </div>
 
-          <div className="flex flex-col items-center py-8">
-            <div className="w-20 h-20 bg-purple-400 rounded-full flex items-center justify-center mb-4">
-              <FileUp className="text-white" size={40} />
+          <div className="flex flex-col items-center py-6">
+            <div className="w-16 h-16 bg-purple-400 rounded-full flex items-center justify-center mb-3">
+              <FileUp className="text-white" size={32} />
             </div>
-            <h2 className="text-3xl font-bold mb-2">Export Your Data</h2>
-            <p className="text-gray-500 text-center mb-8">
+            <h2 className="text-2xl font-bold mb-2">Export Your Data</h2>
+            <p className={`text-center mb-6 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
               Choose a format to export your expense data
             </p>
 
-            <h3 className="text-xl font-bold self-start mb-4">Export Format</h3>
+            <h3 className={`text-lg font-bold self-start mb-3 ${isDark ? "text-gray-200" : "text-gray-900"}`}>Export Format</h3>
 
-            <div className="w-full mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-between">
+            <div className={`w-full mb-3 p-3 rounded-lg flex items-center justify-between ${
+              isDark ? "bg-gray-800" : "bg-gray-100"
+            }`}>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-purple-200 rounded-lg flex items-center justify-center mr-4">
+                <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-purple-600 text-lg">⋮≡</span>
                 </div>
                 <div>
-                  <div className="font-bold">CSV</div>
-                  <div className="text-gray-500 text-sm">Spreadsheet compatible format</div>
+                  <div className={`font-bold text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>CSV</div>
+                  <div className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>Spreadsheet compatible format</div>
                 </div>
               </div>
-              <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
 
-            <div className="w-full mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-between">
+            <div className={`w-full mb-4 p-3 rounded-lg flex items-center justify-between ${
+              isDark ? "bg-gray-800" : "bg-gray-100"
+            }`}>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-purple-200 rounded-lg flex items-center justify-center mr-4">
+                <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-purple-600 text-lg">{ "{}" }</span>
                 </div>
                 <div>
-                  <div className="font-bold">JSON</div>
-                  <div className="text-gray-500 text-sm">Developer friendly format</div>
+                  <div className={`font-bold text-sm ${isDark ? "text-gray-200" : "text-gray-900"}`}>JSON</div>
+                  <div className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>Developer friendly format</div>
                 </div>
               </div>
             </div>
 
             <Button 
               onClick={() => handleExport("CSV")}
-              className="w-full mt-4 bg-purple-500 hover:bg-purple-600 text-white py-6"
+              className="w-full mt-4 bg-purple-500 hover:bg-purple-600 text-white py-3"
             >
               Export Data
             </Button>
