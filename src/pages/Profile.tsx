@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -353,9 +352,17 @@ const Profile: React.FC = () => {
           <SheetHeader className="mb-4">
             <div className="flex justify-between items-center">
               <SheetTitle className="text-xl">Edit Profile</SheetTitle>
-              <button onClick={() => setOpenSheet("")} className={isDark ? "text-gray-300" : "text-gray-500"}>
-                Cancel
-              </button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={handleEditName}
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 text-sm"
+                >
+                  Save
+                </Button>
+                <button onClick={() => setOpenSheet("")} className={isDark ? "text-gray-300" : "text-gray-500"}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </SheetHeader>
           <div className="space-y-4">
@@ -397,12 +404,6 @@ const Profile: React.FC = () => {
                 />
               </div>
             </div>
-            <Button 
-              onClick={handleEditName}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white"
-            >
-              Save Changes
-            </Button>
           </div>
         </SheetContent>
       </Sheet>
