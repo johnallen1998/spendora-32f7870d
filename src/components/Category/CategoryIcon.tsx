@@ -25,7 +25,7 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, size = 24, classN
   const { userProfile } = useAppContext();
   const isDark = userProfile.theme === "dark";
   
-  // Use theme-aware default color if no className is provided
+  // Only use theme-aware default color if no className is provided
   const iconColor = className || (isDark ? "text-gray-200" : "text-gray-700");
   
   const getIconByCategory = () => {

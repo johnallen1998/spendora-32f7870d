@@ -15,10 +15,11 @@ const Layout = ({ children }: LayoutProps) => {
   const isDark = userProfile.theme === "dark";
   const isMobile = useIsMobile();
 
-  // Scroll to top on route change
+  // Apply theme to document element and scroll to top on route change
   useEffect(() => {
+    document.documentElement.className = userProfile.theme;
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+  }, [location.pathname, userProfile.theme]);
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
